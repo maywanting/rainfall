@@ -1,0 +1,23 @@
+{
+  "name": "rainfall",
+  "version": "1.0.0",
+  "description": "display the rainfall",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --hot --open"
+  },
+  "respository": {
+    "type": "git",
+    "url": "git@github.com:maywanting/rainfall.git"
+  },
+  "author": "may",
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^4.12.0",
+    "jquery": "^3.2.1",
+    "leaflet": "^1.2.0",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
+  }
+}
