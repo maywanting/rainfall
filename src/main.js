@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-// import SelectArea from 'leaflet-area-select';
+import $ from 'jquery';
 
 //leaflet controller
 const lController = {
@@ -17,10 +17,74 @@ const lController = {
         }).addTo(this.map);
     },
 
-    addMarker: function(x, y) {
-        L.marker([x, y], {icon: this.icon}).addTo(this.map);
+    addMarker: function(x, y, i, rain) {
+        L.marker([x, y], {icon: this.icon}).addTo(this.map)
+            .on('click', function(e){
+                cController.updateChart(i, x, y, rain);
+            });
     },
 };
+
+//chart controller
+const cController = {
+    item: 0,
+    allData: [],
+    stormLevel: 20,
+
+    updateChart: function(t, x, y, rain) {
+        this.item = t;
+        const data = this.allData[t];
+        let xLine = [];
+        for (let i = 0; i < data.length; i++) {
+            let time = (parseInt(i / 24)) + "d " + (i % 24) + "h";
+            xLine.push(time);
+        }
+
+        console.log(xLine);
+        let trace1 = {
+            x: xLine,
+            y: data,
+            type: 'scatter'
+        };
+        let trace2 = this.addSquare(rain);
+        let layout = {
+            title: x + ", " + y
+        };
+        Plotly.newPlot('lineChart', [trace1, trace2], layout);
+        // Plotly.newPlot('lineChart', [trace1], layout);
+    },
+
+    addSquare: function(storm) {
+        let start = parseInt(storm[0][0] / 24) + "d " + (storm[0][0] % 24) + "h";
+        const stormLen = storm.length;
+        let end = parseInt(storm[stormLen-1][1] / 24) + "d " + (storm[stormLen-1][1] % 24) + "h";
+        const data = this.allData[this.item];
+        //get start
+        for (let i = storm[0][0]; i <= storm[stormLen-1][1]; i++) {
+            if (data[i] >= 20) {
+                start = parseInt(i / 24) + "d " + (i % 24) + "h";
+                break;
+            }
+        }
+
+        //get end
+        for (let i = storm[stormLen-1][1]; i >= storm[0][0]; i--) {
+            if (data[i] >= 20) {
+                end = parseInt(i / 24) + "d " + (i % 24) + "h";
+                break;
+            }
+        }
+
+        const max = Math.max(...data) + 5;
+        let trace = {
+            x: [start, end],
+            y: [max, max],
+            fill: 'tozeroy',
+            type: 'scatter'
+        };
+        return trace;
+    },
+}
 
 const getData = {
     filePath: '/public/',
@@ -38,7 +102,13 @@ const getData = {
     // console.log('start');
     await getData.request('rainStorm.json');
     const markers = getData.resData;
-    markers.forEach(function(marker) {
-        lController.addMarker(marker[1], marker[0]);
+
+    await getData.request('rainOrigin.json');
+    cController.allData = getData.resData;
+    // console.log(cController.allData);
+    // console.log(markers.length);
+    markers.forEach(function(marker, i) {
+        // console.log(marker);
+        lController.addMarker(marker[1], marker[0], i, marker[2]);
     });
 })();
