@@ -40,7 +40,6 @@ const cController = {
             xLine.push(time);
         }
 
-        console.log(xLine);
         let trace1 = {
             x: xLine,
             y: data,
@@ -48,10 +47,11 @@ const cController = {
         };
         let trace2 = this.addSquare(rain);
         let layout = {
-            title: x + ", " + y
+            title: x + ", " + y,
+            width: window.innerWidth,
+            height: window.innerHeight / 2
         };
         Plotly.newPlot('lineChart', [trace1, trace2], layout);
-        // Plotly.newPlot('lineChart', [trace1], layout);
     },
 
     addSquare: function(storm) {
