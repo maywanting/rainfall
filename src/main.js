@@ -99,16 +99,12 @@ const getData = {
 
 (async function() {
     lController.initMap();
-    // console.log('start');
     await getData.request('rainStorm.json');
     const markers = getData.resData;
 
     await getData.request('rainOrigin.json');
     cController.allData = getData.resData;
-    // console.log(cController.allData);
-    // console.log(markers.length);
     markers.forEach(function(marker, i) {
-        // console.log(marker);
         lController.addMarker(marker[1], marker[0], i, marker[2]);
     });
 })();

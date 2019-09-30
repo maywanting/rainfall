@@ -3,7 +3,7 @@ const webpack = require('webpack');
 
 const options = {
     entry:{
-        bundle: './src/main.js'
+        bundle: './src/temperature.js'
     },
     output: {
         filename: 'index.js'
